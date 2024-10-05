@@ -18,9 +18,9 @@ CNN Classifier for Recognizing Retinopathy of Premature
 #### 1. **Precision** (Точность)
 - **Определение:** Precision показывает, какая доля предсказанных положительных классов является правильной.
 - **Формула:**
-  $$
-  \text{Precision} = \frac{TP}{TP + FP}
-  $$
+  
+$$\text{Precision} = \frac{TP}{TP + FP}$$
+
   где:
   - **TP (True Positive)** — количество истинно положительных предсказаний,
   - **FP (False Positive)** — количество ложноположительных предсказаний.
@@ -28,19 +28,18 @@ CNN Classifier for Recognizing Retinopathy of Premature
 #### 2. **Recall** (Полнота)
 - **Определение:** Recall измеряет, какую долю всех истинных положительных классов модель смогла правильно классифицировать.
 - **Формула:**
-  $$
-  \text{Recall} = \frac{TP}{TP + FN}
-  $$
+  
+  $$\text{Recall} = \frac{TP}{TP + FN}$$
   где:
   - **TP (True Positive)** — количество истинно положительных предсказаний,
   - **FN (False Negative)** — количество ложноотрицательных предсказаний.
 
-#### 3. **Accuracy** (Точность классификации)
+#### 3. **Accuracy** (Доля правильных ответов)
 - **Определение:** Accuracy показывает, какую долю всех предсказаний модель сделала правильно.
 - **Формула:**
-  $$
-  \text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
-  $$
+  
+  $$\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}$$
+  
   где:
   - **TP (True Positive)** — количество истинно положительных предсказаний,
   - **TN (True Negative)** — количество истинно отрицательных предсказаний,
@@ -62,9 +61,9 @@ CNN Classifier for Recognizing Retinopathy of Premature
 - **FN (False Negative)** — количество неправильно предсказанных отрицательных примеров (ложноотрицательные).
 
 Матрица путаницы позволяет вычислять метрики, такие как:
-- **Precision (Точность)**: $ \frac{TP}{TP + FP} $
-- **Recall (Полнота)**: $ \frac{TP}{TP + FN} $
-- **Accuracy (Точность классификации)**: $ \frac{TP + TN}{TP + TN + FP + FN} $
+- **Precision (Точность)**
+- **Recall (Полнота)**
+- **Accuracy (Доля правильных ответов)**
 
 
 ### Доверительный интервал (Confidence Interval)
