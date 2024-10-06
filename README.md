@@ -70,4 +70,7 @@ $$\text{Precision} = \frac{TP}{TP + FP}$$
 
 Вычисляем доверительный интервал 95% для уверенности модели в своих ответах.
 
+# Обучение моделей
+ - EfficientNet[https://www.kaggle.com/code/artemsattarov/efficientnet-v2b1-for-article-train-e20-r224-embed]
+ - YOLOv8n[https://www.kaggle.com/code/artemsattarov/yolo-for-article-train-70]
 
