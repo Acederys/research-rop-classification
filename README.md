@@ -71,6 +71,60 @@ $$\text{Precision} = \frac{TP}{TP + FP}$$
 Вычисляем доверительный интервал 95% для уверенности модели в своих ответах.
 
 # Обучение моделей
- - EfficientNet[https://www.kaggle.com/code/artemsattarov/efficientnet-v2b1-for-article-train-e20-r224-embed]
- - YOLOv8n[https://www.kaggle.com/code/artemsattarov/yolo-for-article-train-70]
+## Аугментации
+Для аугментаций испольовалась библиотека [Albumentations](https://albumentations.ai/docs/)
+### Функция для аугментаций 
+Вход картинка и выход картинка, читаемая методом из cv2
+Для подачи в другие библиотеки(например, matplotlib) необходимо преобразование 
+```
+cv2.cvtColor(test_img, cv2.COLOR_BGR2RGB)
+```
+
+``` 
+def augmentator(image):
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    #target_image = cv2.cvtColor(cv2.imread('/content/Felis_catus-cat_on_snow.jpg'), cv2.COLOR_BGR2RGB)
+    prob_b = 0.7
+    prob_m = 0.5
+    prob_s = 0.3
+    transform = A.Compose([
+        A.SafeRotate(    limit=(-18, 18),  interpolation=2,  border_mode=2,  p=prob_s),
+        A.HorizontalFlip(p=prob_b),
+        A.VerticalFlip(  p=prob_b),
+        A.Perspective(scale=(0.05, 0.1), keep_size=True, p=prob_s),
+        A.RandomBrightnessContrast(p=prob_m),
+        A.RandomFog(fog_coef_lower=0.01, fog_coef_upper=0.2, alpha_coef=0.08,p=prob_s),
+        A.Sharpen(alpha=(0.1, 0.5), lightness=(0.5, 1.0), p=prob_b),
+        A.RandomToneCurve(scale=0.1,p=prob_m),
+        A.RingingOvershoot(blur_limit=(1, 111),cutoff=(0.5, 2.2),p=prob_m),
+        ])
+
+    transimage =  transform(image=image)['image']
+
+    return transimage
+```
+### Структура аугментированного датасета
+```
+# dataset folders creation
+!mkdir first_dataset_coco
+
+# train folder creation
+!mkdir 'first_dataset_coco/train'
+!mkdir 'first_dataset_coco/train/healthy'
+!mkdir 'first_dataset_coco/train/unhealthy'
+
+# test folder creation
+!mkdir 'first_dataset_coco/test'
+!mkdir 'first_dataset_coco/test/healthy'
+!mkdir 'first_dataset_coco/test/unhealthy'
+
+# val folder creation
+!mkdir 'first_dataset_coco/val'
+!mkdir 'first_dataset_coco/val/healthy'
+!mkdir 'first_dataset_coco/val/unhealthy'
+```
+
+## Ноутбуки с обучением
+ - [EfficientNet](https://www.kaggle.com/code/artemsattarov/efficientnet-v2b1-for-article-train-e20-r224-embed)
+ - [YOLOv8n](https://www.kaggle.com/code/artemsattarov/yolo-for-article-train-70)
 
