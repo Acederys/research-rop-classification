@@ -104,6 +104,7 @@ def augmentator(image):
     return transimage
 ```
 ### Структура аугментированного датасета
+Ещё описание структуры можно посмотреть [тут](https://docs.ultralytics.com/datasets/classify/#dataset-structure-for-yolo-classification-tasks)
 ```
 # dataset folders creation
 !mkdir first_dataset_coco
