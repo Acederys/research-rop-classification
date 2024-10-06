@@ -126,7 +126,7 @@ def augmentator(image):
 ```
 
 ## Ноутбуки с обучением моделей
-Модель EfficientNet взята из TensorFlow, модель YOLO взята из ultralytics 
+Модель EfficientNet взята из [TensorFlow](https://www.tensorflow.org/api_docs/python/tf/keras/applications/efficientnet_v2), модель YOLO взята из [ultralytics](https://docs.ultralytics.com/tasks/classify/) 
  - [EfficientNet](https://www.kaggle.com/code/artemsattarov/efficientnet-v2b1-for-article-train-e20-r224-embed)
  - [YOLOv8n](https://www.kaggle.com/code/artemsattarov/yolo-for-article-train-70)
 
