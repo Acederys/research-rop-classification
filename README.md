@@ -104,7 +104,7 @@ def augmentator(image):
     return transimage
 ```
 ### Структура аугментированного датасета
-Ещё описание структуры можно посмотреть [тут](https://docs.ultralytics.com/datasets/classify/#dataset-structure-for-yolo-classification-tasks)
+Также описание структуры можно посмотреть [тут](https://docs.ultralytics.com/datasets/classify/#dataset-structure-for-yolo-classification-tasks)
 ```
 # dataset folders creation
 !mkdir first_dataset_coco
@@ -125,7 +125,8 @@ def augmentator(image):
 !mkdir 'first_dataset_coco/val/unhealthy'
 ```
 
-## Ноутбуки с обучением
+## Ноутбуки с обучением моделей
+Модель EfficientNet взята из TensorFlow, модель YOLO взята из ultralytics 
  - [EfficientNet](https://www.kaggle.com/code/artemsattarov/efficientnet-v2b1-for-article-train-e20-r224-embed)
  - [YOLOv8n](https://www.kaggle.com/code/artemsattarov/yolo-for-article-train-70)
 
