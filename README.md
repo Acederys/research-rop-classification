@@ -74,16 +74,16 @@ $$\text{Precision} = \frac{TP}{TP + FP}$$
 ## Аугментации
 Для аугментаций испольовалась библиотека [Albumentations](https://albumentations.ai/docs/)
 ### Функция для аугментаций 
-Вход картинка и выход картинка, читаемая методом из cv2
-Для подачи в другие библиотеки(например, matplotlib) необходимо преобразование 
+Вход картинка и выход картинка, читаемая библиотекой cv2
+
+Для использования в других библиотеках(например, matplotlib) необходимо преобразование, т.к. в cv2 каналы изображения в другом порядке: 
 ```
 cv2.cvtColor(test_img, cv2.COLOR_BGR2RGB)
 ```
-
+Функция применяет аугментацию к картинке с определенной вероятностью, которая записана в prob_b, prob_m, prob_s
 ``` 
 def augmentator(image):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    #target_image = cv2.cvtColor(cv2.imread('/content/Felis_catus-cat_on_snow.jpg'), cv2.COLOR_BGR2RGB)
     prob_b = 0.7
     prob_m = 0.5
     prob_s = 0.3
