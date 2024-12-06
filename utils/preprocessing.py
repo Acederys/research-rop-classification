@@ -10,6 +10,7 @@ def normalization_background(eye: Image.Image) -> Image.Image:
     contrast_eye_light = cv2.convertScaleAbs(eye, alpha=1.5, beta=100)
     gray_eye_dark = cv2.cvtColor(contrast_eye_dark, cv2.COLOR_BGR2GRAY)
     gray_eye_light = cv2.cvtColor(contrast_eye_light, cv2.COLOR_BGR2GRAY)
+    gray_eye = cv2.cvtColor(eye, cv2.COLOR_BGR2GRAY)
 
     # Выделяем объекты с помощью THRESH_TRIANGLE
     triangle_eye = cv2.threshold(gray_eye_dark, 0, 255, cv2.THRESH_TRIANGLE)[1]
@@ -17,10 +18,13 @@ def normalization_background(eye: Image.Image) -> Image.Image:
     # Выделяем объекты с помощью THRESH_TRIANGLE
     otsu_eye = cv2.threshold(gray_eye_light, 0, 255, cv2.THRESH_OTSU)[1]
 
+    bin_eye = cv2.threshold(gray_eye, 20, 255, cv2.THRESH_BINARY)[1]
+
     # Используем морф, чтобы почистить от шумов и сделать контуры более гладкими
     kernel_ellipse = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
     triangle_morph_eye = cv2.morphologyEx(triangle_eye, cv2.MORPH_CLOSE, kernel_ellipse, iterations=5)
     otsu_morph_eye = cv2.morphologyEx(otsu_eye, cv2.MORPH_CLOSE, kernel_ellipse, iterations=5)
+    bin_morph_eye = cv2.morphologyEx(bin_eye, cv2.MORPH_CLOSE, kernel_ellipse, iterations=5)
 
     # На основе конура создаем маску
     mask_eye = np.zeros_like(eye)
@@ -28,12 +32,17 @@ def normalization_background(eye: Image.Image) -> Image.Image:
     # Выделяем контуры на снимке, и выбираем самый большой (по идее это глаз)
     triangle_contours = cv2.findContours(triangle_morph_eye, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
     otsu_contours = cv2.findContours(otsu_morph_eye, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
+    bin_contours = cv2.findContours(bin_morph_eye, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
     if triangle_contours:
         max_contour = max(triangle_contours, key=cv2.contourArea)
         cv2.fillConvexPoly(mask_eye, max_contour, (255, 255, 255, 255))
 
     if otsu_contours:
         max_contour = max(otsu_contours, key=cv2.contourArea)
+        cv2.fillConvexPoly(mask_eye, max_contour, (255, 255, 255, 255))
+
+    if bin_contours:
+        max_contour = max(bin_contours, key=cv2.contourArea)
         cv2.fillConvexPoly(mask_eye, max_contour, (255, 255, 255, 255))
 
     clear_eye = cv2.cvtColor(cv2.bitwise_and(eye, mask_eye), cv2.COLOR_BGR2RGB)
