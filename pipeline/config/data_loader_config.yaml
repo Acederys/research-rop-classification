@@ -8,16 +8,11 @@ s3:
   local_folder: 'ret_img_serius'
 
 transforms:
-  - name: apply_clahe
-    params: {}
-  - name: resize
-    params:
-      size: [480, 640]
+#  - name: apply_clahe
+#    params: {}
   - name: random_horizontal_flip
     params:
       p: 0.5
-  - name: to_tensor
-    params: {}
 
 datasets:
   train_folder: 'ret_img_serius/train_no_bg'
