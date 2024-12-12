@@ -1,0 +1,24 @@
+s3:
+  access_key: ''
+  secret_key: ''
+  endpoint_url: 'https://storage.yandexcloud.net/'
+  endpoint_url: 'https://storage.yandexcloud.net/'
+  bucket_name: 'retinopatyml'
+  folder_name: 'b1gbqcgk1bfajrkrfdfr/no_bg/'
+  local_folder: 'ret_img_serius'
+
+transforms:
+  - name: apply_clahe
+    params: {}
+  - name: resize
+    params:
+      size: [480, 640]
+  - name: random_horizontal_flip
+    params:
+      p: 0.5
+  - name: to_tensor
+    params: {}
+
+datasets:
+  train_folder: 'ret_img_serius/train_no_bg'
+  val_folder: 'ret_img_serius/test_no_bg'
