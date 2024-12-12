@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 from PIL import Image
 from torchvision import datasets, transforms
-from augmentation import apply_clahe
+#from augmentation import apply_clahe
 
 class CustomDataset(Dataset):
     def __init__(self, root, transform):
@@ -106,3 +106,6 @@ def main_dataloader(yaml_path):
     train_dataset, val_dataset = create_datasets(config, transform)
 
     return train_dataset, val_dataset
+
+train_dataset, val_dataset = main_dataloader('../config/data_loader_config.yaml')
+print(train_dataset, val_dataset)
