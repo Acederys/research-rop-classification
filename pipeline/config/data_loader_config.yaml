@@ -8,8 +8,10 @@ s3:
   local_folder: 'ret_img_serius'
 
 transforms:
-#  - name: apply_clahe
-#    params: {}
+  - name: normalization_background
+    params: {}
+  - name: apply_clahe
+    params: {}
   - name: resize
     params:
       size: [480, 640]

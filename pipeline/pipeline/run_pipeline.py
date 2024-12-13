@@ -80,7 +80,9 @@ def run_kfold_pipeline():
         f1_scores.append(f1)
         precisions.append(precision)
         recalls.append(recall)
+        print('')
         print(f'Fold {fold+1} test metrics - Accuracy: {accuracy}, F1 Score: {f1}, Precision: {precision}, Recall: {recall}')
+        print('')
 
     print('Avg metrics in folds:')
     # Усредняем метрики

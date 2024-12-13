@@ -4,7 +4,7 @@ import yaml
 from torchvision import transforms
 from torch.utils.data import Dataset
 from torchvision import datasets, transforms
-from augmentation import apply_clahe
+from augmentation import apply_clahe, normalization_background
 
 class CustomDataset(Dataset):
     def __init__(self, root, transform):
@@ -38,6 +38,8 @@ def load_transforms_from_yaml(yaml_path):
         name = transform_config['name']
         params = transform_config['params']
 
+        if name == 'normalization_background':
+            transform_list.append(transforms.Lambda(normalization_background))
         if name == 'apply_clahe':
             transform_list.append(transforms.Lambda(apply_clahe))
         elif name == 'resize':
