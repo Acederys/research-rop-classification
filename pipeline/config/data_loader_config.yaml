@@ -18,5 +18,5 @@ transforms:
       p: 0.5
 
 datasets:
-  train_folder: 'ret_img_serius/train_no_bg'
-  val_folder: 'ret_img_serius/test_no_bg'
+  train_folder: 'train_no_bg'
+  val_folder: 'test_no_bg'

@@ -8,6 +8,32 @@ def run_pipeline():
     train_dataset, val_dataset = data_loader.main_dataloader('../config/data_loader_config.yaml')
     model, criterion, optimizer, device, num_epochs, batch_size, k_folds = train_modules.load_training_config_from_yaml('../config/train_modules_config.yaml')
 
+    # Создаем DataLoader для тренировочного и валидационного датасетов
+    train_loader = DataLoader(
+        train_dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=4
+    )
+
+    val_loader = DataLoader(
+        val_dataset,   
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=4
+        )
+
+    model = train_modules.train_model(model, train_loader, val_loader, criterion, optimizer, device, num_epochs)
+
+    accuracy, f1, precision, recall = train_modules.calculate_metrics(model, val_loader)
+
+    print(f'Final Accuracy: {accuracy}, F1 Score: {f1}, Precision: {precision}, Recall: {recall}')
+
+
+def run_kfold_pipeline():
+    train_dataset, val_dataset = data_loader.main_dataloader('../config/data_loader_config.yaml')
+    model, criterion, optimizer, device, num_epochs, batch_size, k_folds = train_modules.load_training_config_from_yaml('../config/train_modules_config.yaml')
+
     # Определяем количество фолдов
     k = k_folds
     kfold = KFold(n_splits=k, shuffle=True, random_state=42)
@@ -59,6 +85,7 @@ def run_pipeline():
     print(f'Mean F1 Score: {mean_f1}')
     print(f'Mean Precision: {mean_precision}')
     print(f'Mean Recall: {mean_recall}')
+
 
 if __name__ == "__main__":
     run_pipeline()
