@@ -3,11 +3,8 @@ import os
 import yaml
 from torchvision import transforms
 from torch.utils.data import Dataset
-import cv2
-import numpy as np
-from PIL import Image
 from torchvision import datasets, transforms
-#from augmentation import apply_clahe
+from augmentation import apply_clahe
 
 class CustomDataset(Dataset):
     def __init__(self, root, transform):
@@ -43,10 +40,12 @@ def load_transforms_from_yaml(yaml_path):
 
         if name == 'apply_clahe':
             transform_list.append(transforms.Lambda(apply_clahe))
+        elif name == 'resize':
+            transform_list.append(transforms.Resize(params['size']))
         elif name == 'random_horizontal_flip':
             transform_list.append(transforms.RandomHorizontalFlip(p=params['p']))
-        transform_list.append(transforms.Resize(480, 640))
-        transform_list.append(transforms.ToTensor())
+            
+    transform_list.append(transforms.ToTensor())
         # Добавьте другие преобразования по мере необходимости
 
     return transforms.Compose(transform_list)
@@ -106,6 +105,3 @@ def main_dataloader(yaml_path):
     train_dataset, val_dataset = create_datasets(config, transform)
 
     return train_dataset, val_dataset
-
-train_dataset, val_dataset = main_dataloader('../config/data_loader_config.yaml')
-print(train_dataset, val_dataset)

@@ -10,6 +10,9 @@ s3:
 transforms:
 #  - name: apply_clahe
 #    params: {}
+  - name: resize
+    params:
+      size: [480, 640]
   - name: random_horizontal_flip
     params:
       p: 0.5
