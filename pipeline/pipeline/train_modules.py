@@ -9,9 +9,11 @@ def calculate_metrics(model, val_loader):
     model.eval()
     all_labels = []
     all_predictions = []
-
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     with torch.no_grad():
         for images, labels, _ in val_loader:
+            images = images.to(device)
+            labels = labels.to(device)
             outputs = model(images)
             _, predicted = torch.max(outputs.data, 1)
             all_labels.extend(labels.cpu().numpy())
