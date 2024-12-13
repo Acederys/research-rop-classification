@@ -68,20 +68,20 @@ def run_kfold_pipeline():
 
         model = train_modules.train_model(model, train_loader, val_loader, criterion, optimizer, device, num_epochs)
 
-        accuracy, f1, precision, recall = train_modules.calculate_metrics(model, val_loader)
+        test_loader = DataLoader(
+            test_dataset_main,
+            batch_size=batch_size,
+            shuffle=False,
+            num_workers=4
+        )
+
+        accuracy, f1, precision, recall = train_modules.calculate_metrics(model, test_loader)
         accuracies.append(accuracy)
         f1_scores.append(f1)
         precisions.append(precision)
         recalls.append(recall)
+        print(f'Fold {fold+1} test metrics - Accuracy: {accuracy}, F1 Score: {f1}, Precision: {precision}, Recall: {recall}')
 
-        print(f'Fold {fold+1} - Accuracy: {accuracy}, F1 Score: {f1}, Precision: {precision}, Recall: {recall}')
-
-    test_loader = DataLoader(
-        test_dataset_main,
-        batch_size=batch_size,
-        shuffle=False,
-        num_workers=4
-    )
     print('Avg metrics in folds:')
     # Усредняем метрики
     mean_accuracy = np.mean(accuracies)
@@ -93,13 +93,6 @@ def run_kfold_pipeline():
     print(f'Mean F1 Score: {mean_f1}')
     print(f'Mean Precision: {mean_precision}')
     print(f'Mean Recall: {mean_recall}')
-
-    print('-' * 30)
-    print('Metrics in final test dataset:')
-
-    accuracy, f1, precision, recall = train_modules.calculate_metrics(model, test_loader)
-
-    print(f'Accuracy: {accuracy}, F1 Score: {f1}, Precision: {precision}, Recall: {recall}')
 
 
 if __name__ == "__main__":
