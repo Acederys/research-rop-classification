@@ -3,6 +3,7 @@ from sklearn.model_selection import KFold
 import numpy as np
 import data_loader
 import train_modules
+import yaml
 
 def run_pipeline():
     train_dataset, val_dataset = data_loader.main_dataloader('../config/data_loader_config.yaml')
@@ -31,7 +32,7 @@ def run_pipeline():
 
 
 def run_kfold_pipeline():
-    train_dataset, val_dataset = data_loader.main_dataloader('../config/data_loader_config.yaml')
+    train_dataset_main, test_dataset_main = data_loader.main_dataloader('../config/data_loader_config.yaml')
     model, criterion, optimizer, device, num_epochs, batch_size, k_folds = train_modules.load_training_config_from_yaml('../config/train_modules_config.yaml')
 
     # Определяем количество фолдов
@@ -43,12 +44,12 @@ def run_kfold_pipeline():
     precisions = []
     recalls = []
 
-    for fold, (train_idx, val_idx) in enumerate(kfold.split(train_dataset)):
+    for fold, (train_idx, val_idx) in enumerate(kfold.split(train_dataset_main)):
         print(f'Fold {fold+1}')
 
         # Создаем тренировочный и валидационный датасеты
-        train_dataset = Subset(train_dataset, train_idx)
-        val_dataset = Subset(val_dataset, val_idx)
+        train_dataset = Subset(train_dataset_main, train_idx)
+        val_dataset = Subset(train_dataset_main, val_idx)
 
         # Создаем DataLoader для тренировочного и валидационного датасетов
         train_loader = DataLoader(
@@ -75,6 +76,13 @@ def run_kfold_pipeline():
 
         print(f'Fold {fold+1} - Accuracy: {accuracy}, F1 Score: {f1}, Precision: {precision}, Recall: {recall}')
 
+    test_loader = DataLoader(
+        test_dataset_main,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=4
+    )
+    print('Avg metrics in folds:')
     # Усредняем метрики
     mean_accuracy = np.mean(accuracies)
     mean_f1 = np.mean(f1_scores)
@@ -86,6 +94,21 @@ def run_kfold_pipeline():
     print(f'Mean Precision: {mean_precision}')
     print(f'Mean Recall: {mean_recall}')
 
+    print('-' * 30)
+    print('Metrics in final test dataset:')
+
+    accuracy, f1, precision, recall = train_modules.calculate_metrics(model, test_loader)
+
+    print(f'Accuracy: {accuracy}, F1 Score: {f1}, Precision: {precision}, Recall: {recall}')
+
 
 if __name__ == "__main__":
-    run_pipeline()
+
+    with open('../config/pipeline_config.yaml', 'r') as file:
+        config = yaml.safe_load(file)
+    is_k_folds = config['k_folds']
+
+    if is_k_folds:
+        run_kfold_pipeline()
+    else:
+        run_pipeline()

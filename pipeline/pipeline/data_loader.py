@@ -54,7 +54,7 @@ def load_transforms_from_yaml(yaml_path):
 def download_files_if_not_exists(config):
     s3_config = config['s3']
     local_folder = s3_config['local_folder']
-
+    print('Check if data already installed...')
     # Проверка существования локальной папки
     if not os.path.exists(local_folder):
         # Создание локальной папки
@@ -103,5 +103,5 @@ def main_dataloader(yaml_path):
 
     # Создание датасетов
     train_dataset, val_dataset = create_datasets(config, transform)
-
+    print('Dataloader finished his job')
     return train_dataset, val_dataset

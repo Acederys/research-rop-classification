@@ -66,7 +66,6 @@ def load_training_config_from_yaml(yaml_path):
 
 def train_model(model, train_loader, val_loader, criterion, optimizer, device, num_epochs=10):
     for epoch in range(num_epochs):
-        print(f'Epoch {epoch+1}/{num_epochs}')
         print('-' * 30)
         model.train()
         running_loss = 0.0
