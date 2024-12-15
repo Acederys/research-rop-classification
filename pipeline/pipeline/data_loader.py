@@ -91,7 +91,7 @@ def create_datasets(config, transform):
     datasets_config = config['datasets']
     train_folder = os.path.join(config['s3']['local_folder'], datasets_config['train_folder'])
     val_folder = os.path.join(config['s3']['local_folder'], datasets_config['val_folder'])
-    num = config['mult']
+    num = datasets_config['mult']
 
     if num:
         train_dataset = CustomDoubleDataset(
