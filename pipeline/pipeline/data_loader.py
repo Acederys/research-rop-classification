@@ -13,6 +13,20 @@ class CustomDataset(Dataset):
         self.image_paths = [x[0] for x in self.dataset.samples]
 
     def __len__(self):
+        return len(self.dataset)  # Возвращаем исходное количество изображений
+
+    def __getitem__(self, idx):
+        image, label = self.dataset[idx]
+        augmented_image = self.transform(image)  # Применяем аугментацию один раз
+        return augmented_image, label, self.image_paths[idx]
+
+class CustomDoubleDataset(Dataset):
+    def __init__(self, root, transform):
+        self.dataset = datasets.ImageFolder(root=root)
+        self.transform = transform
+        self.image_paths = [x[0] for x in self.dataset.samples]
+
+    def __len__(self):
         return len(self.dataset) * 2  # Удваиваем количество изображений
 
     def __getitem__(self, idx):
@@ -77,17 +91,28 @@ def create_datasets(config, transform):
     datasets_config = config['datasets']
     train_folder = os.path.join(config['s3']['local_folder'], datasets_config['train_folder'])
     val_folder = os.path.join(config['s3']['local_folder'], datasets_config['val_folder'])
+    num = config['mult']
 
-    # Создаем тренировочный и валидационный датасеты
-    train_dataset = CustomDataset(
-        root=train_folder,
-        transform=transform
-    )
+    if num:
+        train_dataset = CustomDoubleDataset(
+            root=train_folder,
+            transform=transform
+        )
 
-    val_dataset = CustomDataset(
-        root=val_folder,
-        transform=transform
-    )
+        val_dataset = CustomDoubleDataset(
+            root=val_folder,
+            transform=transform
+        )
+    else:
+        train_dataset = CustomDataset(
+            root=train_folder,
+            transform=transform
+        )
+
+        val_dataset = CustomDataset(
+            root=val_folder,
+            transform=transform
+        )
 
     return train_dataset, val_dataset
 
