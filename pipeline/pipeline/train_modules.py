@@ -1,9 +1,10 @@
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, confusion_matrix
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import yaml
 from torchvision import models
+
 
 def calculate_metrics(model, val_loader):
     model.eval()
@@ -23,8 +24,9 @@ def calculate_metrics(model, val_loader):
     f1 = f1_score(all_labels, all_predictions, average='weighted')
     precision = precision_score(all_labels, all_predictions, average='weighted')
     recall = recall_score(all_labels, all_predictions, average='weighted')
+    conf_matrix = confusion_matrix(all_labels, all_predictions)
 
-    return accuracy, f1, precision, recall
+    return accuracy, f1, precision, recall, conf_matrix
 
 
 def load_training_config_from_yaml(yaml_path):
@@ -65,6 +67,9 @@ def load_training_config_from_yaml(yaml_path):
 
 
 def train_model(model, train_loader, val_loader, criterion, optimizer, device, num_epochs=10):
+    best_model = None
+    best_avg_loss = float('inf')
+    
     for epoch in range(num_epochs):
         print('-' * 30)
         model.train()
@@ -79,7 +84,8 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, device, n
             optimizer.step()
             running_loss += loss.item()
 
-        print(f'Epoch {epoch+1}/{num_epochs}, Loss: {running_loss/len(train_loader)}')
+        train_loss = running_loss / len(train_loader)
+        print(f'Epoch {epoch+1}/{num_epochs}, Loss: {train_loss}')
 
         model.eval()
         val_loss = 0.0
@@ -96,6 +102,14 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, device, n
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
 
-        print(f'Validation Loss: {val_loss/len(val_loader)}, Accuracy: {100 * correct / total}%')
+        val_loss /= len(val_loader)
+        print(f'Validation Loss: {val_loss}, Accuracy: {100 * correct / total}%')
 
+        avg_loss = (train_loss + val_loss) / 2
+        if avg_loss < best_avg_loss:
+            best_avg_loss = avg_loss
+            best_model = model.state_dict()
+            print(f'Epoch {epoch+1} is the new best epoch with average loss: {avg_loss}')
+
+    model.load_state_dict(best_model)
     return model

@@ -26,9 +26,10 @@ def run_pipeline():
 
     model = train_modules.train_model(model, train_loader, val_loader, criterion, optimizer, device, num_epochs)
 
-    accuracy, f1, precision, recall = train_modules.calculate_metrics(model, val_loader)
+    accuracy, f1, precision, recall, conf_matrix = train_modules.calculate_metrics(model, val_loader)
 
     print(f'Final Accuracy: {accuracy}, F1 Score: {f1}, Precision: {precision}, Recall: {recall}')
+    print(f'Final confusion matrix: {conf_matrix}')
 
 
 def run_kfold_pipeline():

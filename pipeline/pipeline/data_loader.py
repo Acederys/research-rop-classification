@@ -62,7 +62,6 @@ def load_transforms_from_yaml(yaml_path):
             transform_list.append(transforms.RandomHorizontalFlip(p=params['p']))
             
     transform_list.append(transforms.ToTensor())
-        # Добавьте другие преобразования по мере необходимости
 
     return transforms.Compose(transform_list)
 
