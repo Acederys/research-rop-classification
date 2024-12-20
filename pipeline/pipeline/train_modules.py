@@ -2,8 +2,12 @@ from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_sc
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import yaml
 from torchvision import models
+import yaml
+from sklearn.manifold import TSNE
+import matplotlib.pyplot as plt
+import numpy as np
+from manual_models import ResNet18WithEmbeddings
 
 
 def calculate_metrics(model, val_loader):
@@ -29,6 +33,37 @@ def calculate_metrics(model, val_loader):
     return accuracy, f1, precision, recall, conf_matrix
 
 
+def visualize_embeddings(embeddings, labels, save_path='../out_files/embeddings_visualization.png'):
+    tsne = TSNE(n_components=2, random_state=42)
+    embeddings_2d = tsne.fit_transform(embeddings)
+
+    plt.figure(figsize=(10, 10))
+    scatter = plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], c=labels, cmap='viridis')
+    plt.colorbar(scatter)
+    plt.title('t-SNE Visualization of Embeddings')
+    plt.savefig(save_path)
+    plt.close()
+
+
+def extract_and_visualize_embeddings(model, val_loader, device, save_path='../out_files/embeddings_visualization.png'):
+    model.eval()
+    all_labels = []
+    all_embeddings = []
+
+    with torch.no_grad():
+        for images, labels, _ in val_loader:
+            images = images.to(device)
+            labels = labels.to(device)
+            embeddings = model.get_embeddings(images)
+            all_labels.extend(labels.cpu().numpy())
+            all_embeddings.extend(embeddings.cpu().numpy())
+
+    all_labels = np.array(all_labels)
+    all_embeddings = np.array(all_embeddings)
+
+    visualize_embeddings(all_embeddings, all_labels, save_path)
+
+
 def load_training_config_from_yaml(yaml_path):
     with open(yaml_path, 'r') as file:
         config = yaml.safe_load(file)
@@ -43,10 +78,9 @@ def load_training_config_from_yaml(yaml_path):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     #Загрузка модели
-    model = models.resnet18(pretrained=True)
-    num_ftrs = model.fc.in_features
+    model = ResNet18WithEmbeddings()
     num_classes = training_config['model']['num_classes']
-    model.fc = nn.Linear(num_ftrs, num_classes)
+    model = ResNet18WithEmbeddings(num_classes = num_classes)
     model = model.to(device)
 
     # Загрузка функции потерь
@@ -69,6 +103,7 @@ def load_training_config_from_yaml(yaml_path):
 def train_model(model, train_loader, val_loader, criterion, optimizer, device, num_epochs=10):
     best_model = None
     best_avg_loss = float('inf')
+    best_epoch = 0
     
     for epoch in range(num_epochs):
         print('-' * 30)
@@ -107,9 +142,12 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, device, n
 
         avg_loss = (train_loss + val_loss) / 2
         if avg_loss < best_avg_loss:
+            best_epoch = epoch + 1
             best_avg_loss = avg_loss
             best_model = model.state_dict()
             print(f'Epoch {epoch+1} is the new best epoch with average loss: {avg_loss}')
 
     model.load_state_dict(best_model)
+    print(f'Loaded epoch {best_epoch} as the best epoch with average loss: {best_avg_loss}')
+    print('-' * 30)
     return model
