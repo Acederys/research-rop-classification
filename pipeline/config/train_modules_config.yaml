@@ -1,6 +1,6 @@
 training:
   loss_function:
-    name: CrossEntropyLoss
+    name: CrossEntropyLoss # или NLLLoss, HingeEmbeddingLoss
     params: {}
   optimizer:
     name: Adam
@@ -10,4 +10,6 @@ training:
   batch_size: 64
   k_folds: 5
   model:
+    type: 'resnet'  # или 'efficientnet'
+    version: 'resnet18'  # или 'b0', 'b1', 'b2', 'b3', 'resnet18', 'resnet34', 'resnet50'
     num_classes: 2

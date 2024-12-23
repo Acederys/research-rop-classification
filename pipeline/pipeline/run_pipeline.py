@@ -24,7 +24,7 @@ def run_pipeline():
         shuffle=False,
         num_workers=4
         )
-
+    print('All data loaded correctly, start working brr brr brr....')
     model = train_modules.train_model(model, train_loader, val_loader, criterion, optimizer, device, num_epochs)
     torch.save(model.state_dict(), '../out_files/model_for_api.pth')
     train_modules.extract_and_visualize_embeddings(model, val_loader, device)

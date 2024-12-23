@@ -7,7 +7,7 @@ import yaml
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import numpy as np
-from manual_models import ResNet18WithEmbeddings
+from manual_models import ResNetWithEmbeddings, EfficientNetWithEmbeddings
 
 
 def calculate_metrics(model, val_loader):
@@ -78,14 +78,26 @@ def load_training_config_from_yaml(yaml_path):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     #Загрузка модели
-    model = ResNet18WithEmbeddings()
     num_classes = training_config['model']['num_classes']
-    model = ResNet18WithEmbeddings(num_classes = num_classes)
-    model = model.to(device)
+    version = training_config['model']['version']
+    if training_config['model']['type'] == 'resnet':
+      model = ResNetWithEmbeddings()
+      model = ResNetWithEmbeddings(num_classes = num_classes, version = version)
+      model = model.to(device)
+    elif training_config['model']['type'] == 'efficientnet':
+      model = EfficientNetWithEmbeddings()
+      model = EfficientNetWithEmbeddings(num_classes = num_classes, version = version)
+      model = model.to(device)
+    else:
+      raise ValueError(f"Unknown model: {training_config['model']['name']}")
 
     # Загрузка функции потерь
     if loss_function_name == 'CrossEntropyLoss':
         criterion = nn.CrossEntropyLoss()
+    elif loss_function_name == 'NLLLoss':
+        criterion = nn.NLLLoss()
+    elif loss_function_name == 'HingeEmbeddingLoss':
+        criterion = nn.HingeEmbeddingLoss()
     else:
         raise ValueError(f"Unknown loss function: {loss_function_name}")
 
